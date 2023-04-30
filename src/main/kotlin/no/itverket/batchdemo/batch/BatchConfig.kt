@@ -1,4 +1,4 @@
-package no.itverket.batchDemo.batch
+package no.itverket.batchdemo.batch
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
 import org.springframework.batch.core.explore.JobExplorer

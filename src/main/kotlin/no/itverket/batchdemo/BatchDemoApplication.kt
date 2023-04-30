@@ -1,4 +1,4 @@
-package no.itverket.batchDemo
+package no.itverket.batchdemo
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication

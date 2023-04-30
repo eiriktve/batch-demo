@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.itverket</groupId>
-	<artifactId>batchDemo</artifactId>
+	<artifactId>batchdemo</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>batchDemo</name>
+	<name>batch-demo</name>
 	<description>Spring Batch Demo</description>
 
 	<properties>
