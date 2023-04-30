@@ -10,13 +10,15 @@
 	</parent>
 	<groupId>no.itverket</groupId>
 	<artifactId>batchDemo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>batchDemo</name>
 	<description>Spring Batch Demo</description>
+
 	<properties>
 		<java.version>17</java.version>
 		<kotlin.version>1.7.22</kotlin.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
