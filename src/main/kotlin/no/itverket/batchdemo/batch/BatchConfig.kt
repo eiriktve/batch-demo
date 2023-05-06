@@ -43,7 +43,7 @@ import javax.sql.DataSource
  */
 @Configuration
 @EnableBatchProcessing(dataSourceRef = "batchDataSource", transactionManagerRef = "batchTransactionManager")
-class BatchConfig(@Qualifier("someOtherDatasource") private val mainDatasource: DataSource) {
+class BatchConfig(@Qualifier("playGroundDataSource") private val dataSource: DataSource) {
 
     @Bean
     fun importJob(
@@ -68,7 +68,7 @@ class BatchConfig(@Qualifier("someOtherDatasource") private val mainDatasource: 
             .chunk<Person, Person>(10, transactionManager)
             .reader(personItemReader())
             .processor(personItemProcessor())
-            .writer(personItemWriter(mainDatasource))
+            .writer(personItemWriter(dataSource))
             .build()
     }
 
@@ -79,7 +79,7 @@ class BatchConfig(@Qualifier("someOtherDatasource") private val mainDatasource: 
         reader.setLinesToSkip(1) // skip header row
         reader.setLineMapper(DefaultLineMapper<Person>().apply {
             setLineTokenizer(DelimitedLineTokenizer().apply {
-                setNames("name", "age", "nationality", "profession", "current_job", "hobby")
+                setNames("first_name", "last_name", "age", "email", "company", "street", "city", "zip_code", "phone")
             })
             setFieldSetMapper(BeanWrapperFieldSetMapper<Person>().apply {
                 setTargetType(Person::class.java)
@@ -91,7 +91,7 @@ class BatchConfig(@Qualifier("someOtherDatasource") private val mainDatasource: 
     @Bean
     fun personItemProcessor(): ItemProcessor<Person, Person> {
         return ItemProcessor { person ->
-            person.copy(name = person.name.uppercase(Locale.getDefault()))
+            person.copy(firstName = person.firstName.uppercase(Locale.getDefault()))
         }
     }
 
@@ -100,15 +100,22 @@ class BatchConfig(@Qualifier("someOtherDatasource") private val mainDatasource: 
         val writer = JdbcBatchItemWriter<Person>()
         writer.setItemSqlParameterSourceProvider(BeanPropertyItemSqlParameterSourceProvider())
         writer.setSql(
-            "INSERT INTO Person (name, age, nationality, profession, current_job, hobby) " +
-                    "VALUES (:name, :age, :nationality, :profession, :currentJob, :hobby)"
+            "INSERT INTO Person (first_name, last_name, age, email, company, street, city, zip_code, phone) " +
+                    "VALUES (:first_name, :last_name, :age, :email, :company, :street, :city, :zip_code, :phone)"
         )
         writer.setDataSource(dataSource)
         return writer
     }
 
-    /* Ikke utenkelig at du ønsker en annen datasource for resten av applikasjonen din, i så fall kan du f.eks lage
-    * en egen @Configuration med en @Primary DataSource */
+    /**
+     * DataSource som brukes spesifikt av JobRepository. Lagrer metadata knytte til selve jobben, som informasjon
+     * om kjøring, ExitCode, m.m. Vi gidder ikke sette opp dette i egen database, så vi bare kaster det inn i en
+     * midlertidig in-memory db.
+     *
+     * Notat: Ikke utenkelig at du ønsker en annen datasource for resten av applikasjonen din, i så fall kan du f.eks
+     * lage en egen @Configuration med en @Primary DataSource.
+     * @see DatabaseConfiguration
+     */
     @Qualifier("batchDataSource")
     @Bean
     fun batchDataSource(): DataSource =
