@@ -1,1 +1,7 @@
+spring:
+  main:
+    web-application-type: none
+  application:
+    name: BatchDemo
 
+build.version: @project.version@
