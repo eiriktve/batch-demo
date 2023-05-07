@@ -8,6 +8,6 @@ data class Person(
     val company: String,
     val street: String,
     val city: String,
-    val zipCode: Int,
+    val zipCode: Short,
     val phone: String
 )

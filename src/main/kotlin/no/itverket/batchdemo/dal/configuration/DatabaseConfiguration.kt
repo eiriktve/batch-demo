@@ -17,6 +17,7 @@ class DatabaseConfiguration {
 
     @Bean
     @Primary
-    @Qualifier("playGroundDataSource")
-    fun playGroundDataSource(): DataSource = playGroundDataSourceProperties().initializeDataSourceBuilder().build()
+    fun playGroundDataSource(): DataSource = playGroundDataSourceProperties()
+        .initializeDataSourceBuilder()
+        .build()
 }

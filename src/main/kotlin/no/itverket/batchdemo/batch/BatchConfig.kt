@@ -43,7 +43,7 @@ import javax.sql.DataSource
  */
 @Configuration
 @EnableBatchProcessing(dataSourceRef = "batchDataSource", transactionManagerRef = "batchTransactionManager")
-class BatchConfig(@Qualifier("playGroundDataSource") private val dataSource: DataSource) {
+class BatchConfig(private val dataSource: DataSource) {
 
     @Bean
     fun importJob(
@@ -68,7 +68,7 @@ class BatchConfig(@Qualifier("playGroundDataSource") private val dataSource: Dat
             .chunk<Person, Person>(10, transactionManager)
             .reader(personItemReader())
             .processor(personItemProcessor())
-            .writer(personItemWriter(dataSource))
+            .writer(personItemWriter())
             .build()
     }
 
@@ -96,7 +96,7 @@ class BatchConfig(@Qualifier("playGroundDataSource") private val dataSource: Dat
     }
 
     @Bean
-    fun personItemWriter(dataSource: DataSource): JdbcBatchItemWriter<Person> {
+    fun personItemWriter(): JdbcBatchItemWriter<Person> {
         val writer = JdbcBatchItemWriter<Person>()
         writer.setItemSqlParameterSourceProvider(BeanPropertyItemSqlParameterSourceProvider())
         writer.setSql(
@@ -114,7 +114,8 @@ class BatchConfig(@Qualifier("playGroundDataSource") private val dataSource: Dat
      *
      * Notat: Ikke utenkelig at du ønsker en annen datasource for resten av applikasjonen din, i så fall kan du f.eks
      * lage en egen @Configuration med en @Primary DataSource.
-     * @see DatabaseConfiguration
+     *
+     * @see no.itverket.batchdemo.dal.configuration.DatabaseConfiguration
      */
     @Qualifier("batchDataSource")
     @Bean
