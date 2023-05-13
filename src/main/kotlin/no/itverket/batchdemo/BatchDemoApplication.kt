@@ -1,10 +1,13 @@
 package no.itverket.batchdemo
 
+import no.itverket.batchdemo.batch.BatchProps
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import kotlin.system.exitProcess
 
+@EnableConfigurationProperties(BatchProps::class)
 @SpringBootApplication
 class BatchDemoApplication
 

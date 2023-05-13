@@ -4,3 +4,5 @@ spring:
     username: postgres
     password: admin
     driverClassName: org.postgresql.Driver
+
+batch.inputFileRelativePath: input/people.csv

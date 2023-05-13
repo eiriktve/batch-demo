@@ -2,6 +2,9 @@ package no.itverket.batchdemo.batch
 
 import no.itverket.batchdemo.batch.listener.JobNotificationListener
 import no.itverket.batchdemo.dal.Person
+import no.itverket.batchdemo.error.BatchRuntimeException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
@@ -17,6 +20,7 @@ import org.springframework.batch.item.database.JdbcBatchItemWriter
 import org.springframework.batch.item.file.FlatFileItemReader
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper
 import org.springframework.batch.item.file.mapping.DefaultLineMapper
+import org.springframework.batch.item.file.mapping.FieldSetMapper
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner
@@ -43,16 +47,20 @@ import javax.sql.DataSource
  */
 @Configuration
 @EnableBatchProcessing(dataSourceRef = "batchDataSource", transactionManagerRef = "batchTransactionManager")
-class BatchConfig(private val dataSource: DataSource) {
+class BatchConfig(private val batchProps: BatchProps, private val dataSource: DataSource) {
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(BatchConfig::class.java)
+    }
 
     @Bean
-    fun importJob(
+    fun job(
         listener: JobNotificationListener,
         jobRepository: JobRepository,
         transactionManager: PlatformTransactionManager,
 
     ): Job {
-        return JobBuilder("ImportJob", jobRepository)
+        return JobBuilder("FileImportJob", jobRepository)
             .incrementer(RunIdIncrementer())
             .flow(ioStep(jobRepository, transactionManager))
             .end()
@@ -74,11 +82,13 @@ class BatchConfig(private val dataSource: DataSource) {
 
     @Bean
     fun personItemReader(): FlatFileItemReader<Person> {
+        val filePath = batchProps.inputFileRelativePath ?: throw BatchRuntimeException("Input file not provided")
         val reader = FlatFileItemReader<Person>()
-        reader.setResource(ClassPathResource("people.csv"))
+        reader.setResource(ClassPathResource(filePath))
         reader.setLinesToSkip(1) // skip header row
         reader.setLineMapper(DefaultLineMapper<Person>().apply {
             setLineTokenizer(DelimitedLineTokenizer().apply {
+                setDelimiter(",")
                 setNames("first_name", "last_name", "age", "email", "company", "street", "city", "zip_code", "phone")
             })
             setFieldSetMapper(BeanWrapperFieldSetMapper<Person>().apply {
