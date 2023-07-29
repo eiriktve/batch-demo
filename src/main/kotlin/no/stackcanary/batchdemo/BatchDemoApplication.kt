@@ -1,6 +1,6 @@
-package no.itverket.batchdemo
+package no.stackcanary.batchdemo
 
-import no.itverket.batchdemo.batch.BatchProps
+import no.stackcanary.batchdemo.batch.BatchProps
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties

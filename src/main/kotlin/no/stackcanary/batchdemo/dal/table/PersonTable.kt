@@ -1,4 +1,4 @@
-package no.itverket.batchdemo.dal.table
+package no.stackcanary.batchdemo.dal.table
 
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
@@ -18,5 +18,5 @@ object PersonTable : Table("person") {
     val phone: Column<String> = varchar("phone", 30)
     val creationDate: Column<Instant> = timestamp("creation_date")
     val lastUpdated: Column<Instant> = timestamp("last_updated")
-    override val primaryKey = PrimaryKey(id)
+    override val primaryKey = PrimaryKey(id) // auto increments on insert
 }

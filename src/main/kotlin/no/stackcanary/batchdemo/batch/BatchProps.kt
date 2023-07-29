@@ -1,4 +1,4 @@
-package no.itverket.batchdemo.batch
+package no.stackcanary.batchdemo.batch
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
