@@ -12,6 +12,6 @@ import kotlin.system.exitProcess
 class BatchDemoApplication
 
 fun main(args: Array<String>) {
-	// Returner jobben sin exit code som applikasjonen sin process exit code
+	// Return the batch ExitCode as the application's process exit code
 	exitProcess(SpringApplication.exit(runApplication<BatchDemoApplication>(*args)))
 }

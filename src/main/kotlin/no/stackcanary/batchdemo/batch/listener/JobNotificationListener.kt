@@ -20,7 +20,7 @@ class JobNotificationListener(): JobExecutionListener {
     }
 
     override fun beforeJob(jobExecution: JobExecution) {
-        log.info("Starting batch job")
+        log.info("Notification listener initialized")
         super.beforeJob(jobExecution)
     }
 

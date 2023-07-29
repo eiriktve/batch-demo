@@ -1,0 +1,6 @@
+spring:
+  batch:
+    job:
+      enabled: false # Tests have their own job launcher
+
+batch.inputFileRelativePath: input/people_test.csv

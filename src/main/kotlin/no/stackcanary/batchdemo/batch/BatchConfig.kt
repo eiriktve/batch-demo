@@ -1,8 +1,8 @@
 package no.stackcanary.batchdemo.batch
 
 import no.stackcanary.batchdemo.batch.listener.JobNotificationListener
-import no.stackcanary.batchdemo.dal.Person
-import no.stackcanary.batchdemo.dal.PersonRespository
+import no.stackcanary.batchdemo.dal.PersonRepository
+import no.stackcanary.batchdemo.dal.model.Person
 import no.stackcanary.batchdemo.error.BatchRuntimeException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,7 +30,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType
 import org.springframework.jdbc.support.JdbcTransactionManager
 import org.springframework.transaction.PlatformTransactionManager
-import java.util.*
 import javax.sql.DataSource
 
 /**
@@ -49,7 +48,7 @@ import javax.sql.DataSource
 @EnableBatchProcessing(dataSourceRef = "batchDataSource", transactionManagerRef = "batchTransactionManager")
 class BatchConfig(
     private val batchProps: BatchProps,
-    private val personRepository: PersonRespository
+    private val personRepository: PersonRepository
 ) {
 
     companion object {
@@ -62,7 +61,7 @@ class BatchConfig(
         jobRepository: JobRepository,
         transactionManager: PlatformTransactionManager
         ): Job {
-        return JobBuilder("FileImportJob", jobRepository)
+        return JobBuilder(JOB_NAME, jobRepository)
             .incrementer(RunIdIncrementer())
             .listener(listener)
             .flow(ioStep(jobRepository, transactionManager))
@@ -75,7 +74,7 @@ class BatchConfig(
         jobRepository: JobRepository,
         transactionManager: PlatformTransactionManager
     ): Step {
-        return StepBuilder("IOStep", jobRepository)
+        return StepBuilder(STEP_NAME, jobRepository)
             .chunk<Person, Person>(10, transactionManager)
             .reader(personItemReader())
             .processor(personItemProcessor())
@@ -89,8 +88,8 @@ class BatchConfig(
             batchProps.inputFileRelativePath ?: throw BatchRuntimeException("Input file not provided")
 
         return FlatFileItemReaderBuilder<Person>()
-            .name("personItemReader")
             .resource(ClassPathResource(filePath))
+            .saveState(false)
             .targetType(Person::class.java)
             .linesToSkip(1)
             .delimited()
@@ -113,7 +112,7 @@ class BatchConfig(
     }
 
     /**
-     * Define a processor like this if you want to do any form of tranformation on the data
+     * Define a processor like this if you want to do any form of transformation on the data
      * before propagating it to the writer. Currently this does nothing, it just returns the
      * person it gets from the reader
      */
@@ -125,10 +124,11 @@ class BatchConfig(
     /**
      * Writer responsible for writing the person to the database.
      *
-     * If you don't have any other database dependencies in your application, you
-     * could go with a JdbcBatchItemWriter, and define the db operation directly in this bean, not
-     * unlike what we've done with the reader and processor. This is primarily to show how you
-     * can weave together different types of writers.
+     * If you don't have any other database dependencies in your application, you could define
+     * your db operations directly in this bean with a JdbcBatchItemWriter.
+     *
+     * This bean shows how you can weave together different types of writers, for example if you
+     * want to have a more customized implementation using a repository class.
      */
     @Bean
     fun personItemWriter(): ItemWriter<Person> =

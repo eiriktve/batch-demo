@@ -5,7 +5,18 @@ The application reads from a csv file, processes it, and stores the data to a po
 
 Uses chunk-based processing, as opposed to Tasklets. 
 
+## Use case
+The purpose of this repository is to be as a nice reference for setting up a spring batch application. The use
+case is quite narrow, without much processing logic, but with all of the basic configuration in place to serve as a
+starting point and lookup-tool when approaching a more complex application. 
+
+This implementations shows how to solve some common use cases that are not provided out-of-the-box:
+- **Automatic startup** when the application runs. Sometimes you want to just run your batch job as a simple jar rather than have it scheduled, for instance if you have a management system for your batch applications such as Tivoli Workload Scheduler.
+- **Does not use the default spring batch tables** for storing job metadata.
+- **Working with multiple datasources** while still using declarative configuration of the job. 
+
 ## Technologies
+- Kotlin with jdk 17
 - Spring Boot 3
 - Spring Batch 5
 - Postgresql

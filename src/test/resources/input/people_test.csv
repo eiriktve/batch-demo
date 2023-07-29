@@ -1,0 +1,4 @@
+first_name,last_name,age,email,company,street,city,zip_code,phone
+John,Smith,35,john.smith@example.com,ABC Inc.,23 Oak Ave.,New York,5678,87654321
+Emma,Rodriguez,28,emma.rodriguez@example.com,Tech Solutions,87 Cedar Lane,Los Angeles,5678,12345678
+Michael,Johnson,42,michael.johnson@example.com,123 Industries,53 Elm Street,Chicago,1234,87654321
