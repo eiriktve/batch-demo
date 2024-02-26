@@ -1,4 +1,4 @@
-# Spring Batch demo
+# Spring Batch application
 A simple application to illustrate some of the functionality in Spring Batch 5.
 
 The application reads from a csv file, processes it, and stores the data to a postgres db. 
